@@ -17,10 +17,12 @@
     "jsx": "react",
     "baseUrl": ".",
     "paths": {
-      "@app/*": ["./src/app/*"],
-      "@app": ["./src/app"],
+      "@app": ["./src/app", "./src/app/*"],
       "@redux": ["./src/redux", "./src/redux/*"],
-      "@router": ["./src/router", "./src/router/*"]
+      "@router": ["./src/router", "./src/router/*"],
+      "@pages": ["./src/pages", "./src/pages/*"],
+      "@core/*": ["./src/core/*"],
+      "@assets/*": ["./assets/*"]
     }
   },
   "include": ["./src"]
