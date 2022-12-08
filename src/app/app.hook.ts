@@ -1,0 +1,3 @@
+const useAppHook = () => {};
+
+export { useAppHook };

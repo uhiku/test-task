@@ -6,6 +6,7 @@
     "skipLibCheck": false,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
@@ -15,7 +16,12 @@
     "noEmit": true,
     "jsx": "react",
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@app/*": ["./src/app/*"],
+      "@app": ["./src/app"],
+      "@redux": ["./src/redux", "./src/redux/*"],
+      "@router": ["./src/router", "./src/router/*"]
+    }
   },
   "include": ["./src"]
 }
