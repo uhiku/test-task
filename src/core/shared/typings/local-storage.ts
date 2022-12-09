@@ -1,5 +1,9 @@
-type LSKeys = "one" | "two";
+import { Figure, Position } from "./canvas";
 
-type LSValues = {} | "test";
+type LSKeys = "images" | "two";
 
-export type { LSKeys, LSValues };
+type TLocalStorage = {
+  images: (Position & Figure)[];
+};
+
+export type { LSKeys, TLocalStorage };

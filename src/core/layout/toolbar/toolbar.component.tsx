@@ -2,21 +2,42 @@ import React from "react";
 import { useToolbarHook } from "./toolbar.hook";
 import { ToolbarProps } from "./toolbar.props";
 import checkIcon from "@assets/check-circle.svg";
-import { Input, Paper } from "@core/components";
+import plusIcon from "@assets/plus.svg";
+import { Button, Input, Paper } from "@core/components";
 
 const Toolbar: React.FC<ToolbarProps> = () => {
-  const { figures } = useToolbarHook();
+  const {
+    handleSearch,
+    searchTitle,
+    figures,
+    handleDragStart,
+    images,
+    handleClearClick,
+    handleDownloadClick,
+  } = useToolbarHook();
 
   return (
     <Paper classes="mt-2 p-2 flex flex-col gap-4">
       <div className="">
         <Input
-          name="search"
-          value=""
-          onChange={(e) => {}}
           type="text"
+          name="search"
+          value={searchTitle}
+          onChange={handleSearch}
           placeholder="Search..."
         />
+      </div>
+      <div className="flex gap-1">
+        <Button variant="primary" onClick={handleClearClick}>
+          <p className="text-sm">Clear</p>
+        </Button>
+        <Button
+          variant="primary"
+          disabled={!images.length}
+          onClick={handleDownloadClick}
+        >
+          <p className="text-sm">Download</p>
+        </Button>
       </div>
       <div>
         <p className="text-sm">Files</p>
@@ -29,9 +50,21 @@ const Toolbar: React.FC<ToolbarProps> = () => {
               className="w-10 cursor-move"
               src={figure.href}
               alt={figure.title}
+              draggable
+              onDragStart={() => {
+                handleDragStart(figure.id);
+              }}
             />
             <p className="text-base">{figure.title}</p>
-            <img src={checkIcon} alt="check" className="w-5 h-5" />
+            <img
+              src={
+                images.some((image) => image.id === figure.id)
+                  ? checkIcon
+                  : plusIcon
+              }
+              alt="check"
+              className="w-5 h-5"
+            />
           </div>
         ))}
       </div>

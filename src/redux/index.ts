@@ -6,7 +6,8 @@ import {
 import createSagaMiddleware from "redux-saga";
 import { run } from "redux-chill";
 
-import { canvas, common, CanvasSaga } from "./stores";
+import { canvas, common, CanvasSaga, CommonSaga } from "./stores";
+import { LocalStorageService } from "@core/services/local-storage.service";
 
 const runStore = () => {
   const sagaMiddleware = createSagaMiddleware({
@@ -23,15 +24,29 @@ const runStore = () => {
     reducer: reducers,
     enhancers: [applyMiddleware(sagaMiddleware)],
     devTools: import.meta.env.DEV, // TODO: add environment management
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({
+        serializableCheck: {
+          ignoredActions: ["[canvas] set"],
+          ignoredPaths: ["canvas.stage"],
+        },
+      }),
   });
 
   const context = {
-    localStorageService: null, // local storage service
+    localStorageService: new LocalStorageService(), // local storage service
   };
 
-  run(sagaMiddleware, [new CanvasSaga()], context);
+  run(sagaMiddleware, [new CanvasSaga(), new CommonSaga()], context);
 
   return store;
 };
 
 export { runStore };
+
+export type Store = {
+  common: ReturnType<typeof common>;
+  canvas: ReturnType<typeof canvas>;
+};
+
+export * from "./stores";

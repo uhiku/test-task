@@ -3,6 +3,7 @@ type ButtonProps = {
 
   onClick?: () => void;
   classes?: string;
+  disabled?: boolean;
 };
 
 export type { ButtonProps };

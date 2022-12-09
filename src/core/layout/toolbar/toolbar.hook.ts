@@ -1,26 +1,43 @@
+import { Store, drag, search, image, download } from "@redux";
 import { useEffect, useState } from "react";
-import img1 from "@assets/img-1.svg";
-import img2 from "@assets/img-2.svg";
-import img3 from "@assets/img-3.svg";
-
-type Figure = {
-  id: number;
-  href: string;
-  title: string;
-};
+import { useDispatch, useSelector } from "react-redux";
 
 const useToolbarHook = () => {
-  const [figures, setFigures] = useState<Figure[]>([]);
+  const dispatch = useDispatch();
+  const { figures, images } = useSelector((state: Store) => state.canvas);
+
+  const [searchTitle, setSearchTitle] = useState("");
+  const [stage, setStage] = useState();
 
   useEffect(() => {
-    setFigures([
-      { id: 1, href: img1, title: "Scoot" },
-      { id: 2, href: img2, title: "Cat" },
-      { id: 3, href: img3, title: "Lady" },
-    ]);
-  }, []);
+    dispatch(search(searchTitle));
+  }, [searchTitle]);
 
-  return { figures };
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTitle(e.target.value);
+  };
+
+  const handleDragStart = (id: number) => {
+    dispatch(drag.start(id));
+  };
+
+  const handleClearClick = () => {
+    dispatch(image.purge());
+  };
+
+  const handleDownloadClick = () => {
+    dispatch(download());
+  };
+
+  return {
+    handleSearch,
+    searchTitle,
+    figures,
+    handleDragStart,
+    images,
+    handleClearClick,
+    handleDownloadClick,
+  };
 };
 
 export { useToolbarHook };

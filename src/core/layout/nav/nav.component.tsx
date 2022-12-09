@@ -2,8 +2,10 @@ import React from "react";
 import shareIcon from "@assets/share.svg";
 import { Button } from "@core/components";
 import { NavProps } from "./nav.props";
+import { useNavHook } from "./nav.hook";
 
 const Nav: React.FC<NavProps> = () => {
+  const { name } = useNavHook();
   return (
     <div className="w-full h-14 flex bg-secondary-bg-light dark:bg-secondary-bg-dark content-center flex-wrap justify-between p-3">
       <div className="flex gap-2">
@@ -15,7 +17,7 @@ const Nav: React.FC<NavProps> = () => {
         </Button>
       </div>
       <div className="flex content-center flex-wrap">
-        <p className="text-xl">Name</p>
+        <p className="text-xl">{name}</p>
       </div>
       <div>
         <Button variant="secondary">

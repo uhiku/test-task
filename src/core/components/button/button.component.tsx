@@ -8,15 +8,17 @@ const Button: React.FC<ButtonProps> = ({
   onClick,
   classes,
   variant = "primary",
+  disabled = false,
 }) => {
   const styles = clsx("duration-100 py-1 px-2", classes, {
-    "bg-primary-btn-light hover:bg-primary-btn-light-100 dark:bg-primary-btn-dark dark:hover:bg-primary-btn-dark-100":
+    "bg-primary-btn-light enabled:hover:bg-primary-btn-light-100 dark:bg-primary-btn-dark dark:enabled:hover:bg-primary-btn-dark-100":
       variant === "primary",
-    "bg-secondary-btn-light hover:bg-secondary-btn-light-100 dark:bg-secondary-btn-dark dark:hover:bg-secondary-btn-dark-100":
+    "bg-secondary-btn-light enabled:hover:bg-secondary-btn-light-100 dark:bg-secondary-btn-dark dark:enabled:hover:bg-secondary-btn-dark-100":
       variant === "secondary",
+    "cursor-not-allowed opacity-70": disabled,
   });
   return (
-    <button className={styles} onClick={onClick && onClick}>
+    <button className={styles} onClick={onClick && onClick} disabled={disabled}>
       {children}
     </button>
   );
