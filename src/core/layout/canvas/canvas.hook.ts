@@ -1,4 +1,4 @@
-import { scalePosition } from "@core/shared";
+import { Figure, Position, scalePosition } from "@core/shared";
 import { drag, konvaStage, Store } from "@redux";
 import Konva from "konva";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -10,6 +10,7 @@ const useCanvasHook = () => {
   const stageContainer = useRef<HTMLDivElement>(null);
   const [stage, setStage] = useState<Konva.Stage>();
   const [layer, setLayer] = useState<Konva.Layer>();
+  const [tr, setTr] = useState<Konva.Transformer>();
 
   useLayoutEffect(() => {
     if (stageContainer.current) {
@@ -30,10 +31,14 @@ const useCanvasHook = () => {
       });
 
       const layer = new Konva.Layer();
+      const transformer = new Konva.Transformer({ id: "transformer" });
+
       stage.add(layer);
+      layer.add(transformer);
 
       setStage(stage);
       setLayer(layer);
+      setTr(transformer);
       dispatch(konvaStage.set(stage));
     }
   }, []);
@@ -53,12 +58,14 @@ const useCanvasHook = () => {
         layer.add(konvaImage);
       });
 
-      /**
-       * Clear canvas on clear event
-       */
       if (images.length === 0) {
-        layer.removeChildren();
+        layer.children?.forEach((child) => {
+          if (child.id() !== "transformer") {
+            child.remove();
+          }
+        });
       }
+      handleSelect();
     }
   }, [images]);
 
@@ -73,6 +80,22 @@ const useCanvasHook = () => {
         dispatch(drag.end(coordinates));
       }
       stage.setPointersPositions(null);
+    }
+  };
+
+  const handleSelect = () => {
+    if (stage && tr) {
+      stage.removeEventListener("click");
+      stage.on("click", (ev) => {
+        if (ev.target === stage) {
+          tr.nodes([]);
+          return;
+        }
+
+        if (images.some((image) => image.id === +ev.target.id())) {
+          tr.nodes([ev.target]);
+        }
+      });
     }
   };
 
