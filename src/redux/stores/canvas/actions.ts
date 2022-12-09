@@ -23,4 +23,6 @@ const search = make("[canvas] search").stage((payload: string) => payload);
 
 const download = make("[canvas] download");
 
-export { konvaStage, image, drag, paint, search, download };
+const share = make("[canvas] share");
+
+export { konvaStage, image, drag, paint, search, download, share };

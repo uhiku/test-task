@@ -1,10 +1,15 @@
-import { Store } from "@redux";
-import { useSelector } from "react-redux";
+import { share, Store } from "@redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const useNavHook = () => {
+  const dispatch = useDispatch();
   const name = useSelector((store: Store) => store.canvas.name);
 
-  return { name };
+  const handleShareClick = () => {
+    dispatch(share());
+  };
+
+  return { handleShareClick, name };
 };
 
 export { useNavHook };
