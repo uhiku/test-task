@@ -7,9 +7,9 @@ const Me: React.FC<MeProps> = () => {
   const {} = useMeHook();
 
   return (
-    <div>
+    <div className="h-full">
       <Nav />
-      <div className="grid grid-cols-[1fr_4fr] gap-8">
+      <div className="grid grid-cols-[1fr_4fr] gap-8 h-full">
         <Toolbar />
         <Canvas />
       </div>

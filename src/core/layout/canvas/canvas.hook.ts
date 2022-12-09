@@ -17,7 +17,7 @@ const useCanvasHook = () => {
       const stage = new Konva.Stage({
         container: stageContainer.current,
         width: stageContainer.current.clientWidth,
-        height: 500,
+        height: stageContainer.current.clientHeight,
         draggable: true,
       });
 
