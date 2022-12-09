@@ -10,10 +10,10 @@ const Nav: React.FC<NavProps> = () => {
     <div className="w-full h-14 flex bg-secondary-bg-light dark:bg-secondary-bg-dark content-center flex-wrap justify-between p-3">
       <div className="flex gap-2">
         <Button variant="primary">
-          <p className="text-lg">Select</p>
+          <p className="text-lg">Dummy 1</p>
         </Button>
         <Button variant="primary">
-          <p className="text-lg">Hand</p>
+          <p className="text-lg">Dummy 2</p>
         </Button>
       </div>
       <div className="flex content-center flex-wrap">
