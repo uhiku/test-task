@@ -4,6 +4,8 @@ import { all, put, select } from "redux-saga/effects";
 import { Store } from "@redux";
 import { LocalStorageService } from "@core/services/local-storage.service";
 import { downloadURI, Figure, Position } from "@core/shared";
+import Konva from "konva";
+import { KonvaEventObject } from "konva/lib/Node";
 
 class CanvasSaga {
   @Saga()
@@ -22,6 +24,9 @@ class CanvasSaga {
         ...figure,
         x: payload.x,
         y: payload.y,
+        rotation: 0,
+        scaleX: 1,
+        scaleY: 1,
       };
       /**
        * Add image to redux and clear drag state
@@ -40,6 +45,48 @@ class CanvasSaga {
     images.push(payload);
 
     localStorageService.set("images", images);
+
+    const stage: Konva.Stage = yield select(
+      (store: Store) => store.canvas.stage
+    );
+
+    const [layer] = stage.getLayers();
+
+    const imageObj = new Image();
+    imageObj.src = payload.href;
+
+    const konvaImage = new Konva.Image({
+      x: payload.x,
+      y: payload.y,
+      image: imageObj,
+      id: `${payload.id}`, // for typescript
+    });
+    layer.add(konvaImage);
+
+    konvaImage.on("transformend", function (evt) {
+      const position = {
+        id: payload.id,
+        x: konvaImage.x(),
+        y: konvaImage.y(),
+        rotation: konvaImage.rotation(),
+        scaleX: konvaImage.scaleX(),
+        scaleY: konvaImage.scaleY(),
+      };
+
+      const images = localStorageService.get("images") || [];
+
+      const index = images.findIndex((image) => image.id === payload.id);
+
+      if (index >= 0) {
+        images[index].x = position.x;
+        images[index].y = position.y;
+        images[index].rotation = position.rotation;
+        images[index].scaleX = position.scaleX;
+        images[index].scaleY = position.scaleY;
+      }
+
+      localStorageService.set("images", images);
+    });
   }
 
   @Saga(paint.localstorage)
@@ -57,7 +104,66 @@ class CanvasSaga {
     payload: Payload<typeof image["purge"]>,
     { localStorageService }: { localStorageService: LocalStorageService }
   ) {
+    const stage: Konva.Stage = yield select(
+      (store: Store) => store.canvas.stage
+    );
+
+    const [layer] = stage.getLayers();
+    const ch = layer.getChildren((child) => child.id() !== "transformer");
+    ch.forEach((c) => c.destroy());
     localStorageService.remove("images");
+  }
+
+  @Saga(image.set)
+  public *onImageSet(
+    payload: Payload<typeof image["set"]>,
+    { localStorageService }: { localStorageService: LocalStorageService }
+  ) {
+    const stage: Konva.Stage = yield select(
+      (store: Store) => store.canvas.stage
+    );
+
+    const [layer] = stage.getLayers();
+    payload.forEach((img) => {
+      const imageObj = new Image();
+      imageObj.src = img.href;
+
+      const konvaImage = new Konva.Image({
+        x: img.x,
+        y: img.y,
+        image: imageObj,
+        id: `${img.id}`, // for typescript
+        rotation: img.rotation,
+        scaleX: img.scaleX,
+        scaleY: img.scaleY,
+      });
+      layer.add(konvaImage);
+
+      konvaImage.on("transformend", () => {
+        const position = {
+          id: img.id,
+          x: konvaImage.x(),
+          y: konvaImage.y(),
+          rotation: konvaImage.rotation(),
+          scaleX: konvaImage.scaleX(),
+          scaleY: konvaImage.scaleY(),
+        };
+
+        const images = localStorageService.get("images") || [];
+
+        const index = images.findIndex((image) => image.id === img.id);
+
+        if (index >= 0) {
+          images[index].x = position.x;
+          images[index].y = position.y;
+          images[index].rotation = position.rotation;
+          images[index].scaleX = position.scaleX;
+          images[index].scaleY = position.scaleY;
+        }
+
+        localStorageService.set("images", images);
+      });
+    });
   }
 
   @Saga(download)
@@ -73,10 +179,11 @@ class CanvasSaga {
   }
 
   @Saga(share)
-  public *onShare() {
-    const images: (Position & Figure)[] = yield select(
-      (store: Store) => store.canvas.images
-    );
+  public *onShare(
+    payload: Payload<typeof share>,
+    { localStorageService }: { localStorageService: LocalStorageService }
+  ) {
+    const images = localStorageService.get("images");
 
     const token = btoa(JSON.stringify(images));
 
@@ -95,6 +202,8 @@ class CanvasSaga {
       yield put(image.set(images));
     }
   }
+
+  private updateLS(evt: KonvaEventObject<any>) {}
 }
 
 export { CanvasSaga };
