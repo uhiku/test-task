@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig } from "vitest/config";
 import { resolve } from "path";
 
 // https://vitejs.dev/config/
@@ -13,6 +13,10 @@ const config = defineConfig({
       "@core": resolve("src/core"),
       "@assets": resolve("assets"),
     },
+  },
+  test: {
+    globals: true,
+    environment: "jsdom",
   },
 });
 
