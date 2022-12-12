@@ -1,4 +1,4 @@
-import { Figure, Position, scalePosition } from "@core/shared";
+import { scalePosition } from "@core/shared";
 import { drag, konvaStage, Store } from "@redux";
 import Konva from "konva";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -44,26 +44,7 @@ const useCanvasHook = () => {
   }, []);
 
   useEffect(() => {
-    if (layer) {
-      images.forEach((imagePos) => {
-        const imageObj = new Image();
-        imageObj.src = imagePos.href;
-
-        const konvaImage = new Konva.Image({
-          x: imagePos.x,
-          y: imagePos.y,
-          image: imageObj,
-          id: `${imagePos.id}`, // for typescript
-        });
-        layer.add(konvaImage);
-      });
-
-      if (images.length === 0) {
-        layer.removeChildren();
-        layer.add(tr!);
-      }
-      handleSelect();
-    }
+    handleSelect();
   }, [images]);
 
   const handleOnDrop = (e: React.DragEvent<HTMLDivElement>) => {

@@ -4,6 +4,7 @@ import { ToolbarProps } from "./toolbar.props";
 import checkIcon from "@assets/check-circle.svg";
 import plusIcon from "@assets/plus.svg";
 import { Button, Input, Paper } from "@core/components";
+import clsx from "clsx";
 
 const Toolbar: React.FC<ToolbarProps> = () => {
   const {
@@ -41,32 +42,35 @@ const Toolbar: React.FC<ToolbarProps> = () => {
       </div>
       <div>
         <p className="text-sm">Files</p>
-        {figures.map((figure) => (
-          <div
-            key={figure.id}
-            className="flex p-2 flex-wrap items-center hover:bg-primary-btn-light-100 dark:hover:bg-primary-btn-dark-100 justify-between"
-          >
-            <img
-              className="w-10 cursor-move"
-              src={figure.href}
-              alt={figure.title}
-              draggable
-              onDragStart={() => {
-                handleDragStart(figure.id);
-              }}
-            />
-            <p className="text-base">{figure.title}</p>
-            <img
-              src={
-                images.some((image) => image.id === figure.id)
-                  ? checkIcon
-                  : plusIcon
-              }
-              alt="check"
-              className="w-5 h-5"
-            />
-          </div>
-        ))}
+        {figures.map((figure) => {
+          const existsOnCanvas = images.some((image) => image.id === figure.id);
+
+          return (
+            <div
+              key={figure.id}
+              className="flex p-2 flex-wrap items-center hover:bg-primary-btn-light-100 dark:hover:bg-primary-btn-dark-100 justify-between"
+            >
+              <img
+                className={clsx("w-10", {
+                  "cursor-not-allowed": existsOnCanvas,
+                  "cursor-move": !existsOnCanvas,
+                })}
+                src={figure.href}
+                alt={figure.title}
+                draggable={!existsOnCanvas}
+                onDragStart={() => {
+                  handleDragStart(figure.id);
+                }}
+              />
+              <p className="text-base">{figure.title}</p>
+              <img
+                src={existsOnCanvas ? checkIcon : plusIcon}
+                alt="check"
+                className="w-5 h-5"
+              />
+            </div>
+          );
+        })}
       </div>
     </Paper>
   );
