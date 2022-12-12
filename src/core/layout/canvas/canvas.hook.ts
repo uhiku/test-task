@@ -59,11 +59,8 @@ const useCanvasHook = () => {
       });
 
       if (images.length === 0) {
-        layer.children?.forEach((child) => {
-          if (child.id() !== "transformer") {
-            child.remove();
-          }
-        });
+        layer.removeChildren();
+        layer.add(tr!);
       }
       handleSelect();
     }
